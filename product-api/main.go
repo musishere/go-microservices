@@ -26,11 +26,13 @@ func main() {
 
 	// PUT routes
 	putRouter := sm.Methods("PUT").Subrouter()
+	putRouter.Use(ph.MiddlewareProductValidation)
 	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)
 	// sm.Handle("/products", ph)
 
 	// POST handler
 	postRouter := sm.Methods("POST").Subrouter()
+	postRouter.Use(ph.MiddlewareProductValidation)
 	postRouter.HandleFunc("/", ph.AddProduct)
 
 	s := &http.Server{
