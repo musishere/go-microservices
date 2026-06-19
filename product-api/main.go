@@ -28,7 +28,6 @@ func main() {
 	putRouter := sm.Methods("PUT").Subrouter()
 	putRouter.Use(ph.MiddlewareProductValidation)
 	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)
-	// sm.Handle("/products", ph)
 
 	// POST handler
 	postRouter := sm.Methods("POST").Subrouter()
