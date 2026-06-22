@@ -14,3 +14,44 @@ message RateRequest {
 message RateResponse {
     float Rate = 1;
 }
+
+enum Currency {
+    CURRENCY_UNSPECIFIED = 0;  // default / unset
+
+    // Major Global
+    CURRENCY_USD = 1;   // US Dollar
+    CURRENCY_EUR = 2;   // Euro
+    CURRENCY_GBP = 3;   // British Pound
+    CURRENCY_JPY = 4;   // Japanese Yen
+    CURRENCY_CHF = 5;   // Swiss Franc
+
+    // Asia Pacific
+    CURRENCY_CNY = 6;   // Chinese Yuan
+    CURRENCY_INR = 7;   // Indian Rupee
+    CURRENCY_KRW = 8;   // South Korean Won
+    CURRENCY_SGD = 9;   // Singapore Dollar
+    CURRENCY_AUD = 10;  // Australian Dollar
+    CURRENCY_NZD = 11;  // New Zealand Dollar
+    CURRENCY_HKD = 12;  // Hong Kong Dollar
+
+    // Middle East & Africa
+    CURRENCY_AED = 13;  // UAE Dirham
+    CURRENCY_SAR = 14;  // Saudi Riyal
+    CURRENCY_PKR = 15;  // Pakistani Rupee
+    CURRENCY_ZAR = 16;  // South African Rand
+    CURRENCY_EGP = 17;  // Egyptian Pound
+    CURRENCY_QAR = 18;  // Qatari Riyal
+
+    // Americas
+    CURRENCY_CAD = 19;  // Canadian Dollar
+    CURRENCY_BRL = 20;  // Brazilian Real
+    CURRENCY_MXN = 21;  // Mexican Peso
+    CURRENCY_ARS = 22;  // Argentine Peso
+
+    // Europe (non-Euro)
+    CURRENCY_SEK = 23;  // Swedish Krona
+    CURRENCY_NOK = 24;  // Norwegian Krone
+    CURRENCY_DKK = 25;  // Danish Krone
+    CURRENCY_PLN = 26;  // Polish Zloty
+    CURRENCY_TRY = 27;  // Turkish Lira
+}
