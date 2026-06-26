@@ -1,0 +1,20 @@
+schema:
+  - schema.graphql
+
+exec:
+  filename: graph.go
+  package: graphqlservice
+
+model:
+  filename: models.go
+  package: graphqlservice
+
+resolver:
+  layout: follow-schema
+  dir: .
+  package: graphqlservice
+  filename_template: "{name}_resolver.go"
+
+models:
+  Time:
+    model: time.Time
