@@ -35,5 +35,6 @@ func main() {
 	}
 
 	// Start the server
+	log.Info("Starting server on port 8010")
 	gs.Serve(l)
 }

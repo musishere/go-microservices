@@ -9,6 +9,10 @@ import (
 	"os/signal"
 	"time"
 
+	protos "github.com/musishere/grpc/protos"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
 	"github.com/gorilla/mux"
 	"github.com/musishere/working-package/handlers"
 )
@@ -16,13 +20,22 @@ import (
 func main() {
 	l := log.New(os.Stdout, "Product-Api", log.LstdFlags)
 
-	ph := handlers.NewProduct(l)
+	// create a new client for grpc
+	conn, err := grpc.NewClient(":8010", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		l.Fatal("Error while making grpc client server")
+	}
+	defer conn.Close()
+	cc := protos.NewCurrencyClient(conn)
+
+	ph := handlers.NewProduct(l, cc)
 
 	sm := mux.NewRouter()
 
 	// GET routes
 	getRouter := sm.Methods("GET").Subrouter()
 	getRouter.HandleFunc("/", ph.GetProducts)
+	getRouter.HandleFunc("/{id:[0-9]+}", ph.GetSingleProduct)
 
 	// PUT routes
 	putRouter := sm.Methods("PUT").Subrouter()

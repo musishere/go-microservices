@@ -45,6 +45,11 @@ func (p *Product) FromJson(r io.Reader) error {
 	return json.NewDecoder(r).Decode(p)
 }
 
+func (p *Product) Tojson(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(p)
+}
+
 func (p *Products) Tojson(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(p)
@@ -60,7 +65,7 @@ func AddProducts(p *Product) {
 }
 
 func UpdateProducts(id int, p *Product) error {
-	_, pos, err := findProduct(id)
+	_, pos, err := FindProduct(id)
 	if err != nil {
 		fmt.Println("error finding product", err)
 		return err
@@ -70,7 +75,7 @@ func UpdateProducts(id int, p *Product) error {
 	return nil
 }
 
-func findProduct(id int) (*Product, int, error) {
+func FindProduct(id int) (*Product, int, error) {
 	for i, p := range productList {
 		if p.ID == id {
 			return p, i, nil

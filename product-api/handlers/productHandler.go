@@ -23,15 +23,53 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	protos "github.com/musishere/grpc/protos"
 	"github.com/musishere/working-package/data"
 )
 
 type Products struct {
-	l *log.Logger
+	l  *log.Logger
+	cc protos.CurrencyClient
 }
 
-func NewProduct(l *log.Logger) *Products {
-	return &Products{l}
+func NewProduct(l *log.Logger, cc protos.CurrencyClient) *Products {
+	return &Products{l, cc}
+}
+
+func (p *Products) GetSingleProduct(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(rw, "Unable to convert id into string", http.StatusBadRequest)
+		return
+	}
+
+	prod, _, err := data.FindProduct(idInt)
+	if err != nil {
+		http.Error(rw, "Product not found", http.StatusNotFound)
+		return
+	}
+
+	err = prod.Tojson(rw)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		return
+	}
+
+	// get exchange rate
+	rr := &protos.RateRequest{
+		Base:        protos.Currencies_USD,
+		Destination: protos.Currencies_EUR,
+	}
+
+	resp, err := p.cc.GetRate(context.Background(), rr)
+	p.l.Println("Response from currency service", resp)
+	if err != nil {
+		p.l.Println("Error getting exchange rate", err)
+	}
+
+	prod.Price = prod.Price * float64(resp.Rate)
 }
 
 func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {

@@ -7,12 +7,11 @@
 package currency
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -22,10 +21,139 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Currencies int32
+
+const (
+	Currencies_UNSPECIFIED Currencies = 0 // default / unset
+	// Major Global
+	Currencies_USD Currencies = 1 // US Dollar
+	Currencies_EUR Currencies = 2 // Euro
+	Currencies_GBP Currencies = 3 // British Pound
+	Currencies_JPY Currencies = 4 // Japanese Yen
+	Currencies_CHF Currencies = 5 // Swiss Franc
+	// Asia Pacific
+	Currencies_CNY Currencies = 6  // Chinese Yuan
+	Currencies_INR Currencies = 7  // Indian Rupee
+	Currencies_KRW Currencies = 8  // South Korean Won
+	Currencies_SGD Currencies = 9  // Singapore Dollar
+	Currencies_AUD Currencies = 10 // Australian Dollar
+	Currencies_NZD Currencies = 11 // New Zealand Dollar
+	Currencies_HKD Currencies = 12 // Hong Kong Dollar
+	// Middle East & Africa
+	Currencies_AED Currencies = 13 // UAE Dirham
+	Currencies_SAR Currencies = 14 // Saudi Riyal
+	Currencies_PKR Currencies = 15 // Pakistani Rupee
+	Currencies_ZAR Currencies = 16 // South African Rand
+	Currencies_EGP Currencies = 17 // Egyptian Pound
+	Currencies_QAR Currencies = 18 // Qatari Riyal
+	// Americas
+	Currencies_CAD Currencies = 19 // Canadian Dollar
+	Currencies_BRL Currencies = 20 // Brazilian Real
+	Currencies_MXN Currencies = 21 // Mexican Peso
+	Currencies_ARS Currencies = 22 // Argentine Peso
+	// Europe (non-Euro)
+	Currencies_SEK Currencies = 23 // Swedish Krona
+	Currencies_NOK Currencies = 24 // Norwegian Krone
+	Currencies_DKK Currencies = 25 // Danish Krone
+	Currencies_PLN Currencies = 26 // Polish Zloty
+	Currencies_TRY Currencies = 27 // Turkish Lira
+)
+
+// Enum value maps for Currencies.
+var (
+	Currencies_name = map[int32]string{
+		0:  "UNSPECIFIED",
+		1:  "USD",
+		2:  "EUR",
+		3:  "GBP",
+		4:  "JPY",
+		5:  "CHF",
+		6:  "CNY",
+		7:  "INR",
+		8:  "KRW",
+		9:  "SGD",
+		10: "AUD",
+		11: "NZD",
+		12: "HKD",
+		13: "AED",
+		14: "SAR",
+		15: "PKR",
+		16: "ZAR",
+		17: "EGP",
+		18: "QAR",
+		19: "CAD",
+		20: "BRL",
+		21: "MXN",
+		22: "ARS",
+		23: "SEK",
+		24: "NOK",
+		25: "DKK",
+		26: "PLN",
+		27: "TRY",
+	}
+	Currencies_value = map[string]int32{
+		"UNSPECIFIED": 0,
+		"USD":         1,
+		"EUR":         2,
+		"GBP":         3,
+		"JPY":         4,
+		"CHF":         5,
+		"CNY":         6,
+		"INR":         7,
+		"KRW":         8,
+		"SGD":         9,
+		"AUD":         10,
+		"NZD":         11,
+		"HKD":         12,
+		"AED":         13,
+		"SAR":         14,
+		"PKR":         15,
+		"ZAR":         16,
+		"EGP":         17,
+		"QAR":         18,
+		"CAD":         19,
+		"BRL":         20,
+		"MXN":         21,
+		"ARS":         22,
+		"SEK":         23,
+		"NOK":         24,
+		"DKK":         25,
+		"PLN":         26,
+		"TRY":         27,
+	}
+)
+
+func (x Currencies) Enum() *Currencies {
+	p := new(Currencies)
+	*p = x
+	return p
+}
+
+func (x Currencies) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Currencies) Descriptor() protoreflect.EnumDescriptor {
+	return file_currency_proto_enumTypes[0].Descriptor()
+}
+
+func (Currencies) Type() protoreflect.EnumType {
+	return &file_currency_proto_enumTypes[0]
+}
+
+func (x Currencies) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Currencies.Descriptor instead.
+func (Currencies) EnumDescriptor() ([]byte, []int) {
+	return file_currency_proto_rawDescGZIP(), []int{0}
+}
+
 type RateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          string                 `protobuf:"bytes,1,opt,name=Base,proto3" json:"Base,omitempty"`
-	Destination   string                 `protobuf:"bytes,2,opt,name=Destination,proto3" json:"Destination,omitempty"`
+	Base          Currencies             `protobuf:"varint,1,opt,name=Base,proto3,enum=Currencies" json:"Base,omitempty"`
+	Destination   Currencies             `protobuf:"varint,2,opt,name=Destination,proto3,enum=Currencies" json:"Destination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,18 +188,18 @@ func (*RateRequest) Descriptor() ([]byte, []int) {
 	return file_currency_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RateRequest) GetBase() string {
+func (x *RateRequest) GetBase() Currencies {
 	if x != nil {
 		return x.Base
 	}
-	return ""
+	return Currencies_UNSPECIFIED
 }
 
-func (x *RateRequest) GetDestination() string {
+func (x *RateRequest) GetDestination() Currencies {
 	if x != nil {
 		return x.Destination
 	}
-	return ""
+	return Currencies_UNSPECIFIED
 }
 
 type RateResponse struct {
@@ -122,12 +250,43 @@ var File_currency_proto protoreflect.FileDescriptor
 
 const file_currency_proto_rawDesc = "" +
 	"\n" +
-	"\x0ecurrency.proto\"C\n" +
-	"\vRateRequest\x12\x12\n" +
-	"\x04Base\x18\x01 \x01(\tR\x04Base\x12 \n" +
-	"\vDestination\x18\x02 \x01(\tR\vDestination\"\"\n" +
+	"\x0ecurrency.proto\"]\n" +
+	"\vRateRequest\x12\x1f\n" +
+	"\x04Base\x18\x01 \x01(\x0e2\v.CurrenciesR\x04Base\x12-\n" +
+	"\vDestination\x18\x02 \x01(\x0e2\v.CurrenciesR\vDestination\"\"\n" +
 	"\fRateResponse\x12\x12\n" +
-	"\x04Rate\x18\x01 \x01(\x02R\x04Rate22\n" +
+	"\x04Rate\x18\x01 \x01(\x02R\x04Rate*\x90\x02\n" +
+	"\n" +
+	"Currencies\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\a\n" +
+	"\x03USD\x10\x01\x12\a\n" +
+	"\x03EUR\x10\x02\x12\a\n" +
+	"\x03GBP\x10\x03\x12\a\n" +
+	"\x03JPY\x10\x04\x12\a\n" +
+	"\x03CHF\x10\x05\x12\a\n" +
+	"\x03CNY\x10\x06\x12\a\n" +
+	"\x03INR\x10\a\x12\a\n" +
+	"\x03KRW\x10\b\x12\a\n" +
+	"\x03SGD\x10\t\x12\a\n" +
+	"\x03AUD\x10\n" +
+	"\x12\a\n" +
+	"\x03NZD\x10\v\x12\a\n" +
+	"\x03HKD\x10\f\x12\a\n" +
+	"\x03AED\x10\r\x12\a\n" +
+	"\x03SAR\x10\x0e\x12\a\n" +
+	"\x03PKR\x10\x0f\x12\a\n" +
+	"\x03ZAR\x10\x10\x12\a\n" +
+	"\x03EGP\x10\x11\x12\a\n" +
+	"\x03QAR\x10\x12\x12\a\n" +
+	"\x03CAD\x10\x13\x12\a\n" +
+	"\x03BRL\x10\x14\x12\a\n" +
+	"\x03MXN\x10\x15\x12\a\n" +
+	"\x03ARS\x10\x16\x12\a\n" +
+	"\x03SEK\x10\x17\x12\a\n" +
+	"\x03NOK\x10\x18\x12\a\n" +
+	"\x03DKK\x10\x19\x12\a\n" +
+	"\x03PLN\x10\x1a\x12\a\n" +
+	"\x03TRY\x10\x1b22\n" +
 	"\bCurrency\x12&\n" +
 	"\aGetRate\x12\f.RateRequest\x1a\r.RateResponseB+Z)github.com/musishere/grpc/protos/currencyb\x06proto3"
 
@@ -143,19 +302,23 @@ func file_currency_proto_rawDescGZIP() []byte {
 	return file_currency_proto_rawDescData
 }
 
+var file_currency_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_currency_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_currency_proto_goTypes = []any{
-	(*RateRequest)(nil),  // 0: RateRequest
-	(*RateResponse)(nil), // 1: RateResponse
+	(Currencies)(0),      // 0: Currencies
+	(*RateRequest)(nil),  // 1: RateRequest
+	(*RateResponse)(nil), // 2: RateResponse
 }
 var file_currency_proto_depIdxs = []int32{
-	0, // 0: Currency.GetRate:input_type -> RateRequest
-	1, // 1: Currency.GetRate:output_type -> RateResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: RateRequest.Base:type_name -> Currencies
+	0, // 1: RateRequest.Destination:type_name -> Currencies
+	1, // 2: Currency.GetRate:input_type -> RateRequest
+	2, // 3: Currency.GetRate:output_type -> RateResponse
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_currency_proto_init() }
@@ -168,13 +331,14 @@ func file_currency_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_currency_proto_rawDesc), len(file_currency_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_currency_proto_goTypes,
 		DependencyIndexes: file_currency_proto_depIdxs,
+		EnumInfos:         file_currency_proto_enumTypes,
 		MessageInfos:      file_currency_proto_msgTypes,
 	}.Build()
 	File_currency_proto = out.File
