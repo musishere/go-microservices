@@ -1,17 +1,20 @@
 package main
 
 import (
-	"context"
+	"flag"
 	"fmt"
 	"log"
 
 	db "github.com/musishere/ecommerce-microservices/db/migrations"
-	"github.com/musishere/ecommerce-microservices/ecom-api/handler"
-	"github.com/musishere/ecommerce-microservices/ecom-api/server"
-	"github.com/musishere/ecommerce-microservices/ecom-api/storer"
+	"google.golang.org/grpc"
 )
 
 func main() {
+	var (
+		grpcAddr = flag.String("grpc-addr", "localhost:50051", "The address of the grpc server")
+	)
+	flag.Parse()
+
 	db, err := db.NewDatabase()
 	if err != nil {
 		log.Fatal("Error opening database")
@@ -21,13 +24,6 @@ func main() {
 	defer db.Close()
 	fmt.Println("Succesfully connected to database")
 
-	storer := storer.NewMySQLStorer(db.GetDB())
-	srvr := server.NewServer(storer)
-	h := handler.NewHandler(context.Background(), srvr)
-	r := handler.RegisterRoutes(h)
-	err = handler.StartServer(":8080", r)
-	if err != nil {
-		log.Fatal("Error starting server")
-		return
-	}
+	grpc.NewClient(*grpcAddr)
+
 }

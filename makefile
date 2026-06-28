@@ -9,4 +9,9 @@ migrateup:
 migratedown:
 	migrate -path db/migrations -database "$(DB_URL)" down
 
+generate:
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		./ecom-grpc/pb/api.proto
+
 .PHONY: mysql migrateup migratedown
