@@ -83,3 +83,146 @@ func (d *MySQLStorer) DeleteProduct(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (d *MySQLStorer) CreateOrder(ctx context.Context, order *Order) (*Order, error) {
+
+	err := d.execTx(ctx, func(tx *sqlx.Tx) error {
+		order, err := d.insertOrder(ctx, tx, order)
+		if err != nil {
+			log.Println("Error creating an order", err)
+			return err
+		}
+
+		for _, item := range order.Items {
+			item.OrderID = order.ID
+			_, err := d.insertOrderItem(ctx, tx, item)
+			if err != nil {
+				log.Println("Error creating an order item", err)
+				return err
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		log.Println("Error creating an order", err)
+		return nil, err
+	}
+
+	return order, nil
+
+}
+
+func (d *MySQLStorer) GetOrderByID(ctx context.Context, id int64) (*Order, error) {
+	var order Order
+	err := d.db.GetContext(ctx, &order, `
+		SELECT * FROM orders WHERE id = ?
+		`, id)
+
+	var items []*OrderItem
+	err = d.db.SelectContext(ctx, &items, `
+			SELECT * FROM order_items WHERE order_id = ?
+			`, id)
+	if err != nil {
+		log.Println("Error getting order items", err)
+		return nil, err
+	}
+	order.Items = items
+	return &order, nil
+}
+
+func (d *MySQLStorer) ListOrders(ctx context.Context) ([]*Order, error) {
+	var orders []*Order
+	err := d.db.SelectContext(ctx, &orders, `
+		SELECT * FROM orders
+		`)
+	if err != nil {
+		log.Println("Error getting orders", err)
+		return nil, err
+	}
+	return orders, nil
+}
+
+func (d *MySQLStorer) deleteOrderAndItems(ctx context.Context, tx *sqlx.Tx, orderId int64) error {
+	_, err := tx.NamedExecContext(ctx, `
+		DELETE FROM order_items WHERE order_id = ?
+		`, orderId)
+	if err != nil {
+		log.Println("Error deleting order items", err)
+		return err
+	}
+	_, err = tx.NamedExecContext(ctx, `
+		DELETE FROM orders WHERE id = ?	
+		`, orderId)
+	if err != nil {
+		log.Println("Error deleting order", err)
+		return err
+	}
+	return nil
+}
+
+func (d *MySQLStorer) insertOrder(ctx context.Context, tx *sqlx.Tx, order *Order) (*Order, error) {
+	res, err := tx.NamedExecContext(ctx, `
+		INSERT INTO orders (payment_method, tax_price, shipping_price, total_price)
+		VALUES (:payment_method, :tax_price, :shipping_price, :total_price)
+		`, order)
+	if err != nil {
+		log.Println("Error inserting order", err)
+		return nil, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		log.Println("Error getting last insert id", err)
+		return nil, err
+	}
+
+	order.ID = id
+
+	return order, nil
+}
+
+func (d *MySQLStorer) insertOrderItem(ctx context.Context, tx *sqlx.Tx, orderItem *OrderItem) (*OrderItem, error) {
+	res, err := tx.NamedExecContext(ctx, `
+		INSERT INTO order_items (order_id, product_id, name, quantity, image, price)
+		VALUES (:order_id, :product_id, :name, :quantity, :image, :price)
+		`, orderItem)
+	if err != nil {
+		log.Println("Error inserting order item", err)
+		return nil, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		log.Println("Error getting last insert id", err)
+		return nil, err
+	}
+
+	orderItem.ID = id
+
+	return orderItem, nil
+}
+
+func (d *MySQLStorer) execTx(ctx context.Context, fn func(tx *sqlx.Tx) error) error {
+	tx, err := d.db.BeginTxx(ctx, nil)
+	if err != nil {
+		log.Println("Error starting transaction", err)
+		return err
+	}
+
+	err = fn(tx)
+	if err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			log.Println("Error rolling back transaction", rbErr)
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Println("Error committing transaction", err)
+		return err
+	}
+
+	return nil
+}
