@@ -20,7 +20,7 @@ func main() {
 	fmt.Println("Succesfully connected to database")
 
 	storer := storer.NewMySQLStorer(db.GetDB())
-	_ := server.NewServer(storer)
+	srvr := server.NewServer(storer)
 
 	// handler := handler.NewHandler(srvr)
 }
