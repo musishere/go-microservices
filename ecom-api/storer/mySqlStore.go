@@ -64,7 +64,7 @@ func (d *MySQLStorer) ListProducts(ctx context.Context) ([]*Product, error) {
 
 func (d *MySQLStorer) UpdateProduct(ctx context.Context, product *Product) (*Product, error) {
 	_, err := d.db.NamedExecContext(ctx, `
-		UPDATE products SET name = :name, image = :image, category = :category, description = :description, rating = :rating, num_reviews = :num_reviews, price = :price, count_in_stock = :count_in_stock WHERE id = :id
+		UPDATE products SET name = :name, image = :image, category = :category, description = :description, rating = :rating, num_reviews = :num_reviews, price = :price, count_in_stock = :count_in_stock,updated_at = :updated_at WHERE id = :id
 		`, product)
 	if err != nil {
 		log.Println("Error updating product", err)

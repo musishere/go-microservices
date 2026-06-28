@@ -5,6 +5,8 @@ import (
 	"log"
 
 	db "github.com/musishere/ecommerce-microservices/db/migrations"
+	"github.com/musishere/ecommerce-microservices/ecom-api/server"
+	"github.com/musishere/ecommerce-microservices/ecom-api/storer"
 )
 
 func main() {
@@ -17,4 +19,8 @@ func main() {
 	defer db.Close()
 	fmt.Println("Succesfully connected to database")
 
+	storer := storer.NewMySQLStorer(db.GetDB())
+	_ := server.NewServer(storer)
+
+	// handler := handler.NewHandler(srvr)
 }

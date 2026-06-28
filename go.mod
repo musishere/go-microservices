@@ -12,5 +12,6 @@ require (
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2 // indirect
+	github.com/go-chi/chi/v5 v5.3.0
 	github.com/stretchr/testify v1.11.1
 )
