@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package order;
+
+import "user/user.proto";
+
+option go_package = "github.com/musishere/practice-grpc/proto/gen;genpb";
+
+message Order{
+  string id = 1;
+  user.User user = 2;
+  Address address = 3;
+}
+
+message Address{
+   string area = 1;
+}
